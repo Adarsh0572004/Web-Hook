@@ -1,0 +1,40 @@
+{
+  "name": "webhook-relay",
+  "version": "1.0.0",
+  "description": "Reliable webhook delivery with inspectable retries",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test",
+    "demo": "node start.mjs --demo",
+    "start": "node --env-file-if-exists=.env start.mjs",
+    "worker": "node --env-file-if-exists=.env worker.mjs",
+    "receiver": "node receiver-start.mjs",
+    "member": "node --env-file-if-exists=.env member.mjs",
+    "check:mongo": "node --env-file-if-exists=.env check-mongo.mjs",
+    "build": "vite build console --outDir ../dist --emptyOutDir",
+    "predemo": "npm run build",
+    "test:browser": "playwright test browser/console.spec.mjs --workers=1",
+    "demo:public": "node start.mjs --public-demo"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bullmq": "^5.81.6",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.5",
+    "ioredis": "^5.11.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^6.22.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "vite": "^7.3.8"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: webhook-relay-api
+    runtime: node
+    region: singapore
+    plan: starter
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+  - type: worker
+    name: webhook-relay-worker
+    runtime: node
+    region: singapore
+    plan: starter
+    buildCommand: npm ci --omit=dev
+    startCommand: npm run worker
+    envVars:
+      - key: MONGODB_URI
+        fromService:
+          type: web
+          name: webhook-relay-api
+          envVarKey: MONGODB_URI
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: webhook-relay-queue
+          property: connectionString
+      - key: RECEIVER_URL
+        sync: false
+      - key: SIGNING_SECRET
+        sync: false
+  - type: keyvalue
+    name: webhook-relay-queue
+    region: singapore
+    plan: starter
+    maxmemoryPolicy: noeviction
+    ipAllowList: []

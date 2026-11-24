@@ -1,0 +1,29 @@
+name: Verify Webhook Relay
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      mongo:
+        image: mongo:8
+        ports: ['27127:27017']
+      redis:
+        image: redis:7-alpine
+        ports: ['16387:6379']
+    env:
+      RELAY_INTEGRATION: '1'
+      RELAY_BROWSER: chromium
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
